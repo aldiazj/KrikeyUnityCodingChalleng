@@ -1,4 +1,5 @@
 using Runtime.DI;
+using Runtime.GameState;
 using Runtime.Health;
 using Runtime.Input;
 using Runtime.Interfaces;
@@ -12,6 +13,7 @@ namespace Runtime.Player
         [SerializeField] private PlayerMovement playerMovement;
         [SerializeField] private Weapon.Weapon weapon;
 
+        private GameManager gameManager;
         private HealthSystem healthSystem;
         private InputManager inputManager;
         private Transform playerTransform;
@@ -20,6 +22,7 @@ namespace Runtime.Player
 
         public void Init(DependencyContainer dependencyContainer)
         {
+            gameManager     = dependencyContainer.GetComponentDependency<GameManager>();
             inputManager    = dependencyContainer.GetComponentDependency<InputManager>();
             playerMovement.Init(dependencyContainer.GetComponentDependency<CameraLimits>());
             healthSystem    = new HealthSystem(maxLives);
@@ -44,7 +47,7 @@ namespace Runtime.Player
 
         private void Die()
         {
-            Debug.Log("Player is dead");
+            gameManager.ChangeState(GameState.GameState.GameOver);
         }
 
         private void OnTriggerEnter(Collider colliderEntered)
