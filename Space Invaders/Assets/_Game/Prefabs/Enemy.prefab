@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2edeed576b94f4e84f6591bdfde657f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextShotWaitInSeconds: 2
+  nextShotWaitInSeconds: 0
   bulletsSpawn: {fileID: 6818060367419795987}
   bulletPrefab: {fileID: 3704295489494699874, guid: 7474de5093afe344eabfc385677e1397, type: 3}
   affectingLayerMask:

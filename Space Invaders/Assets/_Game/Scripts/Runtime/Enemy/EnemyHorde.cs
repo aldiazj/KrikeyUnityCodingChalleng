@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Runtime.DI;
+using Runtime.GameState;
 using Runtime.Input;
 using Runtime.Interfaces;
 using Runtime.ScriptableObjects.Enemy;
@@ -11,13 +13,14 @@ namespace Runtime.Enemy
     {
         private const float ROWS_SPACING = 2.0f;
         private const float COLUMNS_SPACING = 2.0f;
-        
+
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private EnemySO[] enemiesCatalog;
         [SerializeField] private int enemyRows;
         [SerializeField] private int enemiesPerRow;
         [SerializeField] private float hordeMovementInterval = 2;
 
+        private GameManager gameManager;
         private Transform hordeTransform;
         private readonly List<Enemy> enemies = new List<Enemy>();
         private CameraLimits cameraLimits;
@@ -32,6 +35,7 @@ namespace Runtime.Enemy
         {
             player       = dependencyContainer.GetComponentDependency<Player.Player>();
             cameraLimits = dependencyContainer.GetComponentDependency<CameraLimits>();
+            gameManager  = dependencyContainer.GetComponentDependency<GameManager>();
         }
 
         private void Awake()
@@ -41,25 +45,22 @@ namespace Runtime.Enemy
             playerYPos     = player.GetPlayerPosition().y;
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            for (int row = 0; row < enemyRows; row++)
-            {
-                float width = COLUMNS_SPACING * (enemiesPerRow - 1);
-                float height = ROWS_SPACING * (enemyRows - 1);
-                Vector2 center = new Vector2(-width * 0.5f, -height * 0.5f);
-                Vector3 rowPosition = new Vector3(center.x, center.y - row * ROWS_SPACING, 0);
+            gameManager.onGameStateChanged += OnGameStateChanged;
+        }
 
-                for (int column = 0; column < enemiesPerRow; column++)
-                {
-                    GameObject enemyGameObject = Instantiate(enemyPrefab, hordeTransform);
-                    Enemy enemy = enemyGameObject.GetComponent<Enemy>();
-                    Vector3 position = rowPosition;
-                    position.x += column * COLUMNS_SPACING;
-                    enemy.Init(GetEnemyData(), this);
-                    enemy.MoveToInner(position);
-                    enemies.Add(enemy);
-                }
+        private void OnDisable()
+        {
+            gameManager.onGameStateChanged -= OnGameStateChanged;
+        }
+
+        private void OnGameStateChanged(GameState.GameState gameState)
+        {
+            if (gameState == GameState.GameState.LevelSetup)
+            {
+                SetUp();
+                gameManager.ChangeState(GameState.GameState.Play);
             }
         }
 
@@ -83,13 +84,35 @@ namespace Runtime.Enemy
             MoveHorde(hordeDirection * COLUMNS_SPACING);
         }
 
+        private void SetUp()
+        {
+            for (int row = 0; row < enemyRows; row++)
+            {
+                float width = COLUMNS_SPACING * (enemiesPerRow - 1);
+                float height = ROWS_SPACING * (enemyRows - 1);
+                Vector2 center = new Vector2(-width * 0.5f, -height * 0.5f);
+                Vector3 rowPosition = new Vector3(center.x, center.y - row * ROWS_SPACING, 0);
+
+                for (int column = 0; column < enemiesPerRow; column++)
+                {
+                    GameObject enemyGameObject = Instantiate(enemyPrefab, hordeTransform);
+                    Enemy enemy = enemyGameObject.GetComponent<Enemy>();
+                    Vector3 position = rowPosition;
+                    position.x += column * COLUMNS_SPACING;
+                    enemy.Init(GetEnemyData(), this);
+                    enemy.MoveToInner(position);
+                    enemies.Add(enemy);
+                }
+            }
+        }
+
         private void MoveHordeForward()
         {
             Vector3 direction = Vector3.down * ROWS_SPACING;
             
             if (IsHordeLanding(direction))
             {
-                Debug.Log("Horde has landed");
+                gameManager.ChangeState(GameState.GameState.GameOver);
             }
 
             hordeDirection *= -1;
