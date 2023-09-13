@@ -14,7 +14,7 @@ namespace Runtime.Input
             sceneCameraTransform = sceneCamera.transform;
         }
 
-        public float GetHorizontalCameraLimits(float zPosition, float offset)
+        public float GetHorizontalCameraLimits(float zPosition, float offset = 0)
         {
             zPosition -= sceneCameraTransform.position.z;
             return sceneCamera.ScreenToWorldPoint(new Vector3(Screen.width,Screen.height, zPosition)).x - offset;

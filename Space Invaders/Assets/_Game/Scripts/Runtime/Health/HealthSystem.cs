@@ -10,7 +10,7 @@ namespace Runtime.Health
         public Action onLifeLost;
         public Action onAllLivesLost;
 
-        public HealthSystem(int health, int lives)
+        public HealthSystem(int lives)
         {
             Lives     = lives;
             maxLives  = lives;
@@ -21,7 +21,7 @@ namespace Runtime.Health
             Lives--;
             onLifeLost?.Invoke();
 
-            if (Lives < 0)
+            if (Lives <= 0)
             {
                 onAllLivesLost?.Invoke();
             }
