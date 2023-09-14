@@ -14,6 +14,8 @@ namespace Runtime.Enemy
         [SerializeField] private Weapon.Weapon weapon;
         [SerializeField] private Renderer enemyRenderer;
         [SerializeField] private LayerMask friendlyLayer;
+        
+        public int PointsAwarded { get; private set; }
 
         private float firingSpeed;
         private float firingTime = float.PositiveInfinity;
@@ -32,6 +34,7 @@ namespace Runtime.Enemy
             healthSystem                 = new HealthSystem(1);
             healthSystem.onAllLivesLost += Die;
             enemyHorde                   = horde;
+            PointsAwarded                = data.scoreAwarded;
         }
 
         private void Awake()

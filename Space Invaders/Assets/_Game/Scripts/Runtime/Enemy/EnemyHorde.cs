@@ -24,18 +24,20 @@ namespace Runtime.Enemy
         private GameManager gameManager;
         private Transform hordeTransform;
         private CameraLimits cameraLimits;
+        private Player.Player player;
+        private ScoringSystem scoringSystem;
+        private Vector3 hordeDirection = Vector3.right;
+
         private float limit;
         private float timeSinceLastMovement;
-        private Vector3 hordeDirection = Vector3.right;
-        private Player.Player player;
         private float playerYPos;
 
 
         public void Init(DependencyContainer dependencyContainer)
         {
-            player       = dependencyContainer.GetComponentDependency<Player.Player>();
-            cameraLimits = dependencyContainer.GetComponentDependency<CameraLimits>();
-            gameManager  = dependencyContainer.GetComponentDependency<GameManager>();
+            player        = dependencyContainer.GetComponentDependency<Player.Player>();
+            cameraLimits  = dependencyContainer.GetComponentDependency<CameraLimits>();
+            gameManager   = dependencyContainer.GetComponentDependency<GameManager>();
         }
 
         private void Awake()
@@ -43,6 +45,7 @@ namespace Runtime.Enemy
             hordeTransform = transform;
             limit          = cameraLimits.GetHorizontalCameraLimits(hordeTransform.position.z);
             playerYPos     = player.GetPlayerPosition().y;
+            scoringSystem  = gameManager.GetScoringSystem();
         }
 
         private void OnEnable()
@@ -164,9 +167,11 @@ namespace Runtime.Enemy
 
         public void RemoveEnemyFromHorde(Enemy enemy)
         {
+             scoringSystem.Increase(enemy.PointsAwarded);
+            
             enemies.Remove(enemy);
 
-            hordeMovementInterval *= 0.9f;
+            hordeMovementInterval *= 0.8f;
             
             if (enemies.Count == 0)
             {

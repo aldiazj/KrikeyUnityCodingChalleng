@@ -7,5 +7,6 @@ namespace Runtime.ScriptableObjects.Enemy
     {
         public Color color;
         public float firingSpeed;
+        public int scoreAwarded;
     }
 }
