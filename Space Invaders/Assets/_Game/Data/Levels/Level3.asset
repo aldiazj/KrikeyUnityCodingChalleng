@@ -16,6 +16,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f5c22391ff4a09440b86bab7a3fe67b2, type: 2}
   - {fileID: 11400000, guid: 53bc1565fa939184b9ad30ec5246a3dc, type: 2}
   - {fileID: 11400000, guid: c1be5056d0a165d44a077c6fc78b3b27, type: 2}
+  - {fileID: 11400000, guid: 6608a12172268da4c90ba3d9e82d7ed3, type: 2}
   rows: 4
   enemiesPerRow: 8
   initialSpeedInterval: 5

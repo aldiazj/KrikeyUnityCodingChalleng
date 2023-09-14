@@ -10,12 +10,11 @@ namespace Runtime.GameState
 {
     public class GameManager : MonoBehaviour, IRequester
     {
-        private GameState gameState = GameState.Menu;
-
+        public GameState State { get; private set; } = GameState.Menu;
         public Action<GameState> onGameStateChanged;
 
         private string gameOverState;
-        
+
         private InputManager inputManager;
         private Player.Player player;
         private ScoringSystem scoringSystem;
@@ -39,7 +38,7 @@ namespace Runtime.GameState
 
         private void OnEscape()
         {
-            switch (gameState)
+            switch (State)
             {
                 case GameState.Play:
                     ChangeState(GameState.Pause);
@@ -57,7 +56,7 @@ namespace Runtime.GameState
 
         private void OnFocusChanged(bool hasFocus)
         {
-            if (!hasFocus && gameState == GameState.Play)
+            if (!hasFocus && State == GameState.Play)
             {
                 ChangeState(GameState.Pause);
             }
@@ -65,7 +64,7 @@ namespace Runtime.GameState
 
         public void ChangeState(GameState newState)
         {
-            if (gameState == newState)
+            if (State == newState)
             {
                 return;
             }
@@ -93,8 +92,8 @@ namespace Runtime.GameState
                 }
             }
 
-            gameState = newState;
-            onGameStateChanged?.Invoke(gameState);
+            State = newState;
+            onGameStateChanged?.Invoke(State);
         }
 
         public void EndGame(bool hasLost)
