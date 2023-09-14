@@ -25,9 +25,9 @@ namespace Runtime.UI.Views
             mainMenuButton.onClick.AddListener(OpenMainMenu);
         }
 
-        private static void OpenMainMenu()
+        private void OpenMainMenu()
         {
-            SceneManager.LoadScene(0);
+            gameManager.RestartGame();
         }
 
         private void ResumeGame()

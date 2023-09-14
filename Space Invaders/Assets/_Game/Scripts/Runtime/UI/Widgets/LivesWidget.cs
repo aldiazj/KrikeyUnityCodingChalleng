@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Runtime.UI.Views
+namespace Runtime.UI.Widgets
 {
     public class LivesWidget : MonoBehaviour
     {
