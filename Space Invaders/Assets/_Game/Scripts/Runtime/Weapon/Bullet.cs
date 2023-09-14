@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Runtime.Player
+namespace Runtime.Weapon
 {
     public class Bullet : MonoBehaviour
     {
@@ -13,7 +12,7 @@ namespace Runtime.Player
         private LayerMask affectingLayer;
         private LayerMask ignoreLayer;
         private Transform bulletTransform;
-        private Weapon.Weapon owner;
+        private Runtime.Weapon.Weapon owner;
         
         private void Awake()
         {
@@ -35,7 +34,7 @@ namespace Runtime.Player
             }
         }
 
-        public void Init(Transform spawnTransform, LayerMask affectingLayerMask, LayerMask ignoreLayerMask, Weapon.Weapon weapon)
+        public void Init(Transform spawnTransform, LayerMask affectingLayerMask, LayerMask ignoreLayerMask, Runtime.Weapon.Weapon weapon)
         {
             affectingLayer           = affectingLayerMask;
             ignoreLayer              = ignoreLayerMask;

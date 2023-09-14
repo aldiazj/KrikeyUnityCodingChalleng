@@ -14,19 +14,21 @@ namespace Runtime.Weapon
         [SerializeField] private float bulletSpeed;
         
         private static ObjectPool<Bullet> BulletPool;
+        private static GameObject BulletsHolder;
         
         private float timeUntilNextShotIsPossible;
 
         public void Init(float timeBetweenShots = 0)
         {
             nextShotWaitInSeconds = timeBetweenShots;
-            GameObject bulletsHolder = new GameObject("BulletsHolder");
-            BulletPool ??= new ObjectPool<Bullet>(() => CreateBullets(bulletsHolder.transform), maxSize: 20);
+            BulletPool ??= new ObjectPool<Bullet>(CreateBullets, maxSize: 20);
         }
 
-        private Bullet CreateBullets(Transform bulletsHolder)
+        private Bullet CreateBullets()
         {
-            GameObject bulletGameObject = Instantiate(bulletPrefab, bulletsHolder);
+            BulletsHolder??= new GameObject("BulletsHolder");
+            DontDestroyOnLoad(BulletsHolder);
+            GameObject bulletGameObject = Instantiate(bulletPrefab, BulletsHolder.transform);
             return bulletGameObject.GetComponent<Bullet>();
         }
 
