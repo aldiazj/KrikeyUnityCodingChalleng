@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Runtime.DI;
 using Runtime.GameState;
 using Runtime.Input;
@@ -14,6 +13,8 @@ namespace Runtime.Enemy
         private const float ROWS_SPACING = 2.0f;
         private const float COLUMNS_SPACING = 2.0f;
 
+        private readonly List<Enemy> enemies = new List<Enemy>();
+        
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private EnemySO[] enemiesCatalog;
         [SerializeField] private int enemyRows;
@@ -22,7 +23,6 @@ namespace Runtime.Enemy
 
         private GameManager gameManager;
         private Transform hordeTransform;
-        private readonly List<Enemy> enemies = new List<Enemy>();
         private CameraLimits cameraLimits;
         private float limit;
         private float timeSinceLastMovement;
@@ -57,11 +57,13 @@ namespace Runtime.Enemy
 
         private void OnGameStateChanged(GameState.GameState gameState)
         {
-            if (gameState == GameState.GameState.LevelSetup)
+            if (gameState != GameState.GameState.LevelSetup)
             {
-                SetUp();
-                gameManager.ChangeState(GameState.GameState.Play);
+                return;
             }
+
+            SetUp();
+            gameManager.ChangeState(GameState.GameState.Play);
         }
 
         private void Update()
@@ -112,7 +114,7 @@ namespace Runtime.Enemy
             
             if (IsHordeLanding(direction))
             {
-                gameManager.ChangeState(GameState.GameState.GameOver);
+                gameManager.EndGame(hasLost: true);
             }
 
             hordeDirection *= -1;
@@ -163,6 +165,13 @@ namespace Runtime.Enemy
         public void RemoveEnemyFromHorde(Enemy enemy)
         {
             enemies.Remove(enemy);
+
+            hordeMovementInterval *= 0.9f;
+            
+            if (enemies.Count == 0)
+            {
+                gameManager.EndGame(true);
+            }
         }
     }
 }
