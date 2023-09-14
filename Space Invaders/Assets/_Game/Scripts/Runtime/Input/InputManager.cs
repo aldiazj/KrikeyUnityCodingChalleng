@@ -1,38 +1,29 @@
 using System;
-using Runtime.DI;
-using Runtime.GameState;
-using Runtime.Interfaces;
 using UnityEngine;
 
 namespace Runtime.Input
 {
-    public class InputManager : MonoBehaviour, IRequester
+    public class InputManager : MonoBehaviour
     {
         private const string HORIZONTAL_AXIS_NAME = "Horizontal";
-
-        private GameManager gameManager;
         
         public Action<float> onHorizontal;
         public Action onFire;
+        public Action onEscape;
 
         private void Update()
         {
-                if (gameManager.GameState != GameState.GameState.Play)
-            {
-                return;
-            }
-            
             onHorizontal?.Invoke(UnityEngine.Input.GetAxis(HORIZONTAL_AXIS_NAME));
             
             if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
             {
                 onFire?.Invoke();
             }
-        }
-
-        public void Init(DependencyContainer dependencyContainer)
-        {
-            gameManager = dependencyContainer.GetComponentDependency<GameManager>();
+            
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+            {
+                onEscape?.Invoke();
+            }
         }
     }
 }

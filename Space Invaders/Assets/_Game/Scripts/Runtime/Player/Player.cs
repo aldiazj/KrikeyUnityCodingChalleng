@@ -1,8 +1,10 @@
+using System;
 using Runtime.DI;
 using Runtime.GameState;
 using Runtime.Health;
 using Runtime.Input;
 using Runtime.Interfaces;
+using Runtime.Weapon;
 using UnityEngine;
 
 namespace Runtime.Player
@@ -27,43 +29,58 @@ namespace Runtime.Player
             playerMovement.Init(dependencyContainer.GetComponentDependency<CameraLimits>());
             healthSystem    = new HealthSystem(maxLives);
             playerTransform = transform;
+            
+            gameManager.onGameStateChanged += OnGameStateChanged;
         }
 
-        private void OnEnable()
+        private void OnGameStateChanged(GameState.GameState newGameState)
         {
-            inputManager.onFire         += weapon.Fire;
-            inputManager.onHorizontal   += playerMovement.Move;
-            healthSystem.onAllLivesLost += Die;
-
-        }
-
-        private void OnDisable()
-        {
-            inputManager.onFire         -= weapon.Fire;
-            inputManager.onHorizontal   -= playerMovement.Move;
-            healthSystem.onAllLivesLost -= Die;
-
+            switch (newGameState)
+            {
+                case GameState.GameState.Play:
+                    inputManager.onFire         += weapon.Fire;
+                    inputManager.onHorizontal   += playerMovement.Move;
+                    healthSystem.onAllLivesLost += Die;
+                    break;
+                case GameState.GameState.Menu:
+                case GameState.GameState.LevelSetup:
+                case GameState.GameState.Pause:
+                case GameState.GameState.GameOver:
+                    inputManager.onFire         -= weapon.Fire;
+                    inputManager.onHorizontal   -= playerMovement.Move;
+                    healthSystem.onAllLivesLost -= Die;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(newGameState), newGameState, null);
+            }
         }
 
         private void Die()
         {
-            gameManager.ChangeState(GameState.GameState.GameOver);
+            gameManager.EndGame(hasLost: true);
         }
 
         private void OnTriggerEnter(Collider colliderEntered)
         {
             Bullet bullet = colliderEntered.GetComponent<Bullet>();
-            
-            if (bullet)
+
+            if (!bullet)
             {
-                healthSystem.TakeDamage();
-                Debug.Log($"Player has now {healthSystem.Lives} lives");
+                return;
             }
+
+            healthSystem.TakeDamage();
+            Debug.Log($"Player has now {healthSystem.Lives} lives");
         }
 
         public Vector3 GetPlayerPosition()
         {
             return playerTransform.position;
+        }
+
+        public HealthSystem GetHealthSystem()
+        {
+            return healthSystem;
         }
     }
 }

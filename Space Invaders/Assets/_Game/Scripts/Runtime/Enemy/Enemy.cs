@@ -2,6 +2,7 @@
 using Runtime.Health;
 using Runtime.Player;
 using Runtime.ScriptableObjects.Enemy;
+using Runtime.Weapon;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
