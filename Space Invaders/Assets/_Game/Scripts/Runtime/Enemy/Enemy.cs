@@ -1,6 +1,5 @@
 ﻿using System;
 using Runtime.Health;
-using Runtime.Player;
 using Runtime.ScriptableObjects.Enemy;
 using Runtime.Weapon;
 using UnityEngine;
@@ -40,6 +39,11 @@ namespace Runtime.Enemy
         private void Awake()
         {
             enemyTransform = transform;
+        }
+
+        private void OnDisable()
+        {
+            healthSystem.onAllLivesLost -= Die;
         }
 
         private void Update()
