@@ -4,6 +4,7 @@ using Runtime.GameState;
 using Runtime.Input;
 using Runtime.Interfaces;
 using Runtime.ScriptableObjects.Enemy;
+using Runtime.ScriptableObjects.Level;
 using UnityEngine;
 
 namespace Runtime.Enemy
@@ -16,11 +17,13 @@ namespace Runtime.Enemy
         private readonly List<Enemy> enemies = new List<Enemy>();
         
         [SerializeField] private GameObject enemyPrefab;
-        [SerializeField] private EnemySO[] enemiesCatalog;
-        [SerializeField] private int enemyRows;
-        [SerializeField] private int enemiesPerRow;
-        [SerializeField] private float hordeMovementInterval = 2;
+        [SerializeField] private LevelSO[] levelsCatalog;
 
+        
+        private EnemySO[] enemiesCatalog;
+        private int enemyRows;
+        private int enemiesPerRow;
+        private float hordeMovementInterval = 2;
         private GameManager gameManager;
         private Transform hordeTransform;
         private CameraLimits cameraLimits;
@@ -28,6 +31,7 @@ namespace Runtime.Enemy
         private ScoringSystem scoringSystem;
         private Vector3 hordeDirection = Vector3.right;
 
+        private int level;
         private float limit;
         private float timeSinceLastMovement;
         private float playerYPos;
@@ -91,12 +95,20 @@ namespace Runtime.Enemy
 
         private void SetUp()
         {
+            LevelSO levelSO = levelsCatalog[level];
+
+            enemiesCatalog = levelSO.enemiesCatalog;
+            enemyRows = levelSO.rows;
+            enemiesPerRow = levelSO.enemiesPerRow;
+            hordeMovementInterval = levelSO.initialSpeedInterval;
+            
             for (int row = 0; row < enemyRows; row++)
             {
                 float width = COLUMNS_SPACING * (enemiesPerRow - 1);
                 float height = ROWS_SPACING * (enemyRows - 1);
                 Vector2 center = new Vector2(-width * 0.5f, -height * 0.5f);
                 Vector3 rowPosition = new Vector3(center.x, center.y - row * ROWS_SPACING, 0);
+                EnemySO enemyDataForColumn = GetEnemyData();
 
                 for (int column = 0; column < enemiesPerRow; column++)
                 {
@@ -104,7 +116,7 @@ namespace Runtime.Enemy
                     Enemy enemy = enemyGameObject.GetComponent<Enemy>();
                     Vector3 position = rowPosition;
                     position.x += column * COLUMNS_SPACING;
-                    enemy.Init(GetEnemyData(), this);
+                    enemy.Init(enemyDataForColumn, this);
                     enemy.MoveToInner(position);
                     enemies.Add(enemy);
                 }
@@ -162,7 +174,7 @@ namespace Runtime.Enemy
 
         private EnemySO GetEnemyData()
         {
-            return enemiesCatalog[0];
+            return enemiesCatalog[Random.Range(0, enemiesCatalog.Length)];
         }
 
         public void RemoveEnemyFromHorde(Enemy enemy)
@@ -172,11 +184,19 @@ namespace Runtime.Enemy
             enemies.Remove(enemy);
 
             hordeMovementInterval *= 0.8f;
-            
-            if (enemies.Count == 0)
+
+            if (enemies.Count != 0)
             {
-                gameManager.EndGame(true);
+                return;
             }
+
+            level++;
+            if (levelsCatalog.Length == level)
+            {
+                gameManager.EndGame(hasLost: false);
+                return;
+            }
+            SetUp();
         }
     }
 }

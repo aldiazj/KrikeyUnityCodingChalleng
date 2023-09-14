@@ -16,7 +16,7 @@ namespace Runtime.GameState
             }
             
             Scores.Add(newScore);
-            Scores.Sort((scoreA, scoreB) => scoreA.value.CompareTo(scoreB.value));
+            Scores.Sort((scoreA, scoreB) => scoreB.value.CompareTo(scoreA.value));
 
             int scoresLenght = Scores.Count > 10 ? 10 : Scores.Count;
 
