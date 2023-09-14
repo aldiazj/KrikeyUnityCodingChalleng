@@ -9340,13 +9340,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 3835464905814824962, guid: 237699ed2eaada0488589180b283be04, type: 3}
-  enemiesCatalog:
-  - {fileID: 11400000, guid: f5c22391ff4a09440b86bab7a3fe67b2, type: 2}
-  - {fileID: 11400000, guid: 53bc1565fa939184b9ad30ec5246a3dc, type: 2}
-  - {fileID: 11400000, guid: c1be5056d0a165d44a077c6fc78b3b27, type: 2}
-  enemyRows: 3
-  enemiesPerRow: 8
-  hordeMovementInterval: 2
+  levelsCatalog:
+  - {fileID: 11400000, guid: 4eb4ecd3647ffd548879190e35d30da2, type: 2}
+  - {fileID: 11400000, guid: 5f54a652d6976b641a781a3746e7433a, type: 2}
+  - {fileID: 11400000, guid: d6e7ca2c055979143903a551d6089761, type: 2}
 --- !u!4 &1881306837
 Transform:
   m_ObjectHideFlags: 0
