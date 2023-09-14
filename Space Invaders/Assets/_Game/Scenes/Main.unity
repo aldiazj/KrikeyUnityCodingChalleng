@@ -9344,6 +9344,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 4eb4ecd3647ffd548879190e35d30da2, type: 2}
   - {fileID: 11400000, guid: 5f54a652d6976b641a781a3746e7433a, type: 2}
   - {fileID: 11400000, guid: d6e7ca2c055979143903a551d6089761, type: 2}
+  ufoPrefab: {fileID: 2958906637431304482, guid: 34622b7fe228bbb4dbd8ca65a285e9cf, type: 3}
+  ufoSpawns:
+  - {x: -20, y: 18, z: 0}
+  - {x: 20, y: 18, z: 0}
 --- !u!4 &1881306837
 Transform:
   m_ObjectHideFlags: 0
@@ -9700,7 +9704,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   livesWidget: {fileID: 1741592586}
-  textMesh: {fileID: 396600737}
+  scoreTextMesh: {fileID: 396600737}
 --- !u!1 &2076330723
 GameObject:
   m_ObjectHideFlags: 0

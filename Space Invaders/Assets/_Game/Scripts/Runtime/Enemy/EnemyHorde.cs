@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Runtime.DI;
 using Runtime.GameState;
 using Runtime.Input;
@@ -18,8 +19,9 @@ namespace Runtime.Enemy
         
         [SerializeField] private GameObject enemyPrefab;
         [SerializeField] private LevelSO[] levelsCatalog;
+        [SerializeField] private GameObject ufoPrefab;
+        [SerializeField] private Vector3[] ufoSpawns;
 
-        
         private EnemySO[] enemiesCatalog;
         private int enemyRows;
         private int enemiesPerRow;
@@ -107,7 +109,7 @@ namespace Runtime.Enemy
                 float width = COLUMNS_SPACING * (enemiesPerRow - 1);
                 float height = ROWS_SPACING * (enemyRows - 1);
                 Vector2 center = new Vector2(-width * 0.5f, -height * 0.5f);
-                Vector3 rowPosition = new Vector3(center.x, center.y - row * ROWS_SPACING, 0);
+                Vector3 rowPosition = new Vector3(center.x, center.y - row * ROWS_SPACING-level, 0);
                 EnemySO enemyDataForColumn = GetEnemyData();
 
                 for (int column = 0; column < enemiesPerRow; column++)
@@ -121,6 +123,31 @@ namespace Runtime.Enemy
                     enemies.Add(enemy);
                 }
             }
+
+            StartCoroutine(SpawnUfo());
+        }
+
+        private IEnumerator SpawnUfo()
+        {
+            float waitUntilSpawn = Random.Range(4f, 10f);
+            yield return new WaitForSeconds(waitUntilSpawn);
+
+            while (gameManager.State == GameState.GameState.Pause)
+            {
+                yield return null;
+            }
+
+            if (gameManager.State != GameState.GameState.Play)
+            {
+                yield break;
+            }
+            
+            int direction = Random.Range(0, 2);
+            Vector3 spawn = ufoSpawns[direction];
+            BonusUFO bonusUFO = Instantiate(ufoPrefab, spawn, Quaternion.identity).GetComponent<BonusUFO>();
+            bonusUFO.SetUp(gameManager, direction == 0 ? Vector3.right : Vector3.left);
+            
+            StartCoroutine(SpawnUfo());
         }
 
         private void MoveHordeForward()
